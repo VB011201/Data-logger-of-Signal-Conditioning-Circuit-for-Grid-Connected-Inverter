@@ -76,14 +76,10 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addWidget(self.Voltage_graph)
         self.Voltage_buttons = QtWidgets.QFrame(self.Voltage)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.Voltage_buttons.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.Voltage_buttons.sizePolicy().hasHeightForWidth())
         self.Voltage_buttons.setSizePolicy(sizePolicy)
         self.Voltage_buttons.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.Voltage_buttons.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -257,25 +253,26 @@ class Ui_MainWindow(object):
         )
 
     def port_select(self):
-        ports = serial.tools.list_ports.6+ports()
+        # ports = serial.tools.list_ports()
         serialInst = serial.Serial()
-        portsList = []
+        # portsList = []
 
-        for onePort in ports:
-            portsList.append(str(onePort))
-            print(str(onePort))
+        # for onePort in ports:
+            # portsList.append(str(onePort))
+            # print(str(onePort))
 
        # val = input("Select Port: COM")              # error here while using lambda function
-        QCoreApplication.processEvents()
-        for x in range(0, len(portsList)):
+        # QCoreApplication.processEvents()
+        # for x in range(0, len(portsList)):
             #if portsList[x].startswith("COM" + str(val)):
-            if portsList[x].startswith("COM6"):
+            # if portsList[x].startswith("COM6"):
                 #portVar = "COM" + str(val)
-                portVar = "COM6"
-                print(portVar)
+                # portVar = "COM6"
+                # print(portVar)
 
+        
         serialInst.baudrate = 9600
-        serialInst.port = portVar
+        serialInst.port = "COM6"
         serialInst.open()
         # self.plotting.clear()
         x = np.linspace(0, 5000, 20)
