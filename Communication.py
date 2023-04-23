@@ -76,10 +76,14 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addWidget(self.Voltage_graph)
         self.Voltage_buttons = QtWidgets.QFrame(self.Voltage)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.Voltage_buttons.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.Voltage_buttons.sizePolicy().hasHeightForWidth()
+        )
         self.Voltage_buttons.setSizePolicy(sizePolicy)
         self.Voltage_buttons.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.Voltage_buttons.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -89,7 +93,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setSpacing(7)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.Voltage_start_button = QtWidgets.QPushButton(
-            self.Voltage_buttons, clicked= lambda:self.port_select()
+            self.Voltage_buttons, clicked=lambda: self.port_select()
         )
         self.Voltage_start_button.setStyleSheet(
             "QPushButton{\n"
@@ -179,7 +183,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.Current_start_button = QtWidgets.QPushButton(
-            self.Current_buttons, clicked= lambda:self.port_select()
+            self.Current_buttons, clicked=lambda: self.port_select()
         )
         self.Current_start_button.setStyleSheet(
             "QPushButton{\n"
@@ -258,50 +262,54 @@ class Ui_MainWindow(object):
         # portsList = []
 
         # for onePort in ports:
-            # portsList.append(str(onePort))
-            # print(str(onePort))
+        # portsList.append(str(onePort))
+        # print(str(onePort))
 
-       # val = input("Select Port: COM")              # error here while using lambda function
+        # val = input("Select Port: COM")              # error here while using lambda function
         # QCoreApplication.processEvents()
         # for x in range(0, len(portsList)):
-            #if portsList[x].startswith("COM" + str(val)):
-            # if portsList[x].startswith("COM6"):
-                #portVar = "COM" + str(val)
-                # portVar = "COM6"
-                # print(portVar)
+        # if portsList[x].startswith("COM" + str(val)):
+        # if portsList[x].startswith("COM6"):
+        # portVar = "COM" + str(val)
+        # portVar = "COM6"
+        # print(portVar)
 
-        
-        serialInst.baudrate = 9600
-        serialInst.port = "COM6"
+        serialInst.baudrate = 115200
+        serialInst.port = "COM7"
         serialInst.open()
         # self.plotting.clear()
-        x = np.linspace(0, 5000, 20)
-        y = np.zeros((20,))
+        k = 100
+        x = np.linspace(0, 143, k)
+        y = np.zeros((k,))
         # self.data_canvas, ax = plt.subplots(figsize=(10, 8))
         # line1, = ax.plot(x, y)
         i = 0
         while True:
             if serialInst.in_waiting:
-                data = serialInst.readline().decode("utf").rstrip("\n")
-                data = data[1:]
-                data = float(data)
-                data = (data / 255) * 5
+                data1 = serialInst.readline().decode("utf").rstrip("\n")
+                data1 = data1.split()
+                data = float(data1[1])
+                data = (data / 1024) * 3 - 1.5
+                if data1[0] != "Signal":
+                    continue
+                # data = (data / 255) * 5
                 print(data)
+                i = (i + 1) % k
                 y[i] = data
-                i = (i + 1) % 20
+                if i == k - 1:
+                    x += 143
+                    y = np.zeros((k,))
                 # line1.set_xdata(x)
                 # line1.set_ydata(y)
                 self.vgraph.clear()
                 plt.plot(x, y)
-                # plt.show()                                                                #here error
+                plt.ylabel("Voltage")
+                plt.xlabel("Time")
+                # plt.show()
                 self.canvas.draw()
                 # time.sleep(10)
                 self.vgraph.canvas.flush_events()
-                time.sleep(0.1)
-            #     plt.bar(fruits, values, color="red", width=0.5)
-            # plt.xlabel("Time")
-            # plt.ylabel("Voltage")
-            # plt.title("Voltage Measurement")
+                # time.sleep(0.1)
 
 
 if __name__ == "__main__":
