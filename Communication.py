@@ -1,20 +1,14 @@
 import serial
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 import serial.tools.list_ports
 import sys
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-import matplotlib.figure as Figure
-import pyqtgraph as pg
 
 # from numpy import random
 import numpy as np
-import matplotlib.animation as animation
 import serial
-import time
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QCoreApplication
+from PyQt5 import QtCore, QtWidgets
 global portVar 
 global working 
 portVar = "COM6"
@@ -23,6 +17,7 @@ working = True
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+        # Main screen
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -30,6 +25,7 @@ class Ui_MainWindow(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName("verticalLayout")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
+        # Voltage widget
         self.tabWidget.setObjectName("tabWidget")
         self.Voltage = QtWidgets.QWidget()
         self.Voltage.setObjectName("Voltage")
@@ -43,6 +39,7 @@ class Ui_MainWindow(object):
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName("gridLayout")
         self.Voltage_label = QtWidgets.QLabel(self.Voltage_frame)
+        # Styling of Voltage frame
         self.Voltage_label.setStyleSheet(
             "QFrame{\n"
             "background-color: rgb(37, 59, 94);\n"
@@ -67,6 +64,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.Voltage_graph.sizePolicy().hasHeightForWidth()
         )
+        # Defining frame for voltage area graph 
         self.Voltage_graph.setSizePolicy(sizePolicy)
         self.Voltage_graph.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.Voltage_graph.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -88,6 +86,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.Voltage_buttons.sizePolicy().hasHeightForWidth()
         )
+        # Voltage buttons frame
         self.Voltage_buttons.setSizePolicy(sizePolicy)
         self.Voltage_buttons.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.Voltage_buttons.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -96,6 +95,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setSpacing(7)
         self.horizontalLayout.setObjectName("horizontalLayout")
+        # Start button
         self.Voltage_start_button = QtWidgets.QPushButton(self.Voltage_buttons, clicked=lambda: self.port_select(working ))
         self.Voltage_start_button.setStyleSheet(
             "QPushButton{\n"
@@ -115,7 +115,8 @@ class Ui_MainWindow(object):
         )
         self.Voltage_start_button.setObjectName("Voltage_start_button")
         self.horizontalLayout.addWidget(self.Voltage_start_button)
-        self.Voltage_stop_button = QtWidgets.QPushButton(self.Voltage_buttons, clicked= lambda:self.stopping(working))        
+        self.Voltage_stop_button = QtWidgets.QPushButton(self.Voltage_buttons, clicked= lambda:self.stopping(working))   
+        # styling voltage start button   
         self.Voltage_stop_button.setStyleSheet(
             "QPushButton{\n"
             "background-color: rgb(37, 59, 94);\n"
@@ -159,7 +160,9 @@ class Ui_MainWindow(object):
             "font:AlignCenter\n"
             "}"
         )
+        # Current
         self.Current_label.setAlignment(QtCore.Qt.AlignCenter)
+        # Current label
         self.Current_label.setObjectName("Current_label")
         self.gridLayout_2.addWidget(self.Current_label, 0, 0, 1, 1)
         self.verticalLayout_3.addWidget(self.Current_frame, 0, QtCore.Qt.AlignTop)
@@ -172,6 +175,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.Current_graph.sizePolicy().hasHeightForWidth()
         )
+        # current graph
         self.Current_graph.setSizePolicy(sizePolicy)
         self.Current_graph.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.Current_graph.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -180,6 +184,7 @@ class Ui_MainWindow(object):
         self.Current_buttons = QtWidgets.QFrame(self.Current)
         self.Current_buttons.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.Current_buttons.setFrameShadow(QtWidgets.QFrame.Raised)
+        # current buttons
         self.Current_buttons.setObjectName("Current_buttons")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.Current_buttons)
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -244,24 +249,23 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.Voltage_label.setText(_translate("MainWindow", "Voltage"))
-        # self.Port_selection.setText(_translate("MainWindow", "Port Selection"))
         self.Voltage_start_button.setText(_translate("MainWindow", "Start"))
         self.Voltage_stop_button.setText(_translate("MainWindow", "Stop"))
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.Voltage), _translate("MainWindow", "Voltage")
         )
         self.Current_label.setText(_translate("MainWindow", "Current"))
-        # self.Port_selection_2.setText(_translate("MainWindow", "Port Selection"))
         self.Current_start_button.setText(_translate("MainWindow", "Start"))
         self.current_stop_button.setText(_translate("MainWindow", "Stop"))
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.Current), _translate("MainWindow", "Current")
         )
 
- 
+    # stop drawing graph function 
     def stopping(self,working):
         self.working = False
 
+    # start drawing graph function 
     def port_select(self,working):
         serialInst = serial.Serial()
         serialInst.baudrate = 115200
