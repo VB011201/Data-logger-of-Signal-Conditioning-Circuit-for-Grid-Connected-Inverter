@@ -15,7 +15,10 @@ import time
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QCoreApplication
-
+global portVar 
+global working 
+portVar="COM6"
+working=True
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -92,9 +95,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setSpacing(7)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.Voltage_start_button = QtWidgets.QPushButton(
-            self.Voltage_buttons, clicked=lambda: self.port_select()
-        )
+        self.Voltage_start_button = QtWidgets.QPushButton(self.Voltage_buttons, clicked=lambda: self.port_select(working ))
         self.Voltage_start_button.setStyleSheet(
             "QPushButton{\n"
             "background-color: rgb(37, 59, 94);\n"
@@ -113,7 +114,7 @@ class Ui_MainWindow(object):
         )
         self.Voltage_start_button.setObjectName("Voltage_start_button")
         self.horizontalLayout.addWidget(self.Voltage_start_button)
-        self.Voltage_stop_button = QtWidgets.QPushButton(self.Voltage_buttons)
+        self.Voltage_stop_button = QtWidgets.QPushButton(self.Voltage_buttons, clicked= lambda:self.stopping(working))        
         self.Voltage_stop_button.setStyleSheet(
             "QPushButton{\n"
             "background-color: rgb(37, 59, 94);\n"
@@ -256,35 +257,21 @@ class Ui_MainWindow(object):
             self.tabWidget.indexOf(self.Current), _translate("MainWindow", "Current")
         )
 
-    def port_select(self):
-        # ports = serial.tools.list_ports()
+ 
+    def stopping(self,working):
+        self.working = False
+
+    def port_select(self,working):
         serialInst = serial.Serial()
-        # portsList = []
-
-        # for onePort in ports:
-        # portsList.append(str(onePort))
-        # print(str(onePort))
-
-        # val = input("Select Port: COM")              # error here while using lambda function
-        # QCoreApplication.processEvents()
-        # for x in range(0, len(portsList)):
-        # if portsList[x].startswith("COM" + str(val)):
-        # if portsList[x].startswith("COM6"):
-        # portVar = "COM" + str(val)
-        # portVar = "COM6"
-        # print(portVar)
-
         serialInst.baudrate = 115200
-        serialInst.port = "COM7"
+        serialInst.port = portVar
         serialInst.open()
-        # self.plotting.clear()
+        self.working = True
         k = 100
         x = np.linspace(0, 143, k)
         y = np.zeros((k,))
-        # self.data_canvas, ax = plt.subplots(figsize=(10, 8))
-        # line1, = ax.plot(x, y)
         i = 0
-        while True:
+        while self.working:
             if serialInst.in_waiting:
                 data1 = serialInst.readline().decode("utf").rstrip("\n")
                 data1 = data1.split()
@@ -292,27 +279,30 @@ class Ui_MainWindow(object):
                 data = (data / 1024) * 3 - 1.5
                 if data1[0] != "Signal":
                     continue
-                # data = (data / 255) * 5
                 print(data)
-                i = (i + 1) % k
+                i = (i + 1) % 100
                 y[i] = data
-                if i == k - 1:
+                if i == 99:
                     x += 143
-                    y = np.zeros((k,))
-                # line1.set_xdata(x)
-                # line1.set_ydata(y)
+                    y = np.zeros((100,))
                 self.vgraph.clear()
                 plt.plot(x, y)
                 plt.ylabel("Voltage")
                 plt.xlabel("Time")
-                # plt.show()
                 self.canvas.draw()
-                # time.sleep(10)
                 self.vgraph.canvas.flush_events()
-                # time.sleep(0.1)
-
 
 if __name__ == "__main__":
+    ports=serial.tools.list_ports.comports()
+    portsList = []
+    for onePort in ports:
+        portsList.append(str(onePort))
+        print(str(onePort))
+    val = input("Select Port: COM")              
+    for x in range(0, len(portsList)):
+        if portsList[x].startswith("COM" + str(val)):
+            portVar = "COM" + str(val)
+            print(portVar)
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
