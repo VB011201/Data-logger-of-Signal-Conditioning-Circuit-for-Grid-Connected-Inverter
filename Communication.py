@@ -17,8 +17,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QCoreApplication
 global portVar 
 global working 
-portVar="COM6"
-working=True
+portVar = "COM6"
+working = True
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -184,7 +185,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.Current_start_button = QtWidgets.QPushButton(
-            self.Current_buttons, clicked=lambda: self.port_select()
+            self.Current_buttons, clicked=lambda: self.port_select(working)
         )
         self.Current_start_button.setStyleSheet(
             "QPushButton{\n"
@@ -204,7 +205,7 @@ class Ui_MainWindow(object):
         )
         self.Current_start_button.setObjectName("Current_start_button")
         self.horizontalLayout_2.addWidget(self.Current_start_button)
-        self.current_stop_button = QtWidgets.QPushButton(self.Current_buttons)
+        self.current_stop_button = QtWidgets.QPushButton(self.Current_buttons, clicked= lambda:self.stopping(working))
         self.current_stop_button.setStyleSheet(
             "QPushButton{\n"
             "background-color: rgb(37, 59, 94);\n"
