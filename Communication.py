@@ -273,7 +273,7 @@ class Ui_MainWindow(object):
         serialInst.open()
         self.working = True
         k = 100
-        x = np.linspace(0, 143, k)
+        x = np.linspace(0, 100, k)
         y = np.zeros((k,))
         i = 0
         while self.working:
@@ -288,7 +288,7 @@ class Ui_MainWindow(object):
                 i = (i + 1) % 100
                 y[i] = data
                 if i == 99:
-                    x += 143
+                    x += 100
                     y = np.zeros((100,))
                 self.vgraph.clear()
                 plt.plot(x, y)
